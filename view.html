@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Star Wars - Express</title>
+  <!-- Latest compiled and minified CSS & JS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
+  <div class="container">
+    <div class="jumbotron">
+      <h1>Star Wars Express</h1>
+      <h3>The greatest resource in the galaxy for Star Wars statistics!</h3>
+      <hr>
+      <a href="/add"><button type="button" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-plus"></span> Add New Character</button></a>
+      <button id="show-all" type="button" class="btn btn-danger btn-lg"><span class="glyphicon glyphicon-eye-open"></span> Show All Characters</button>
+    </div>
+    <div class="row">
+
+      <div class="col-lg-12">
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><strong>Character Search</strong></h3>
+          </div>
+          <div class="panel-body">
+            <input type="text" id="character-search" class="form-control">
+            <br>
+            <div class="text-right">
+              <button type="submit" class="btn btn-primary btn-md" id="search-btn"><span class="glyphicon glyphicon-search"></span> Search Your Feelings. You know it is true.</button>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title"><strong>Character Statistics</strong></h3>
+          </div>
+          <div id="output" class="panel-body">
+            <div id="default" class="well">
+              <h2 id="name">Yoda</h2>
+              <div id="stats">
+                <h3><strong>Role:</strong> <span id="role">Jedi Master</span></h3>
+                <h3><strong>Age:</strong> <span id="age">900</span></h3>
+                <h3><strong>Force Points:</strong> <span id="force-points">2000</span></h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    $("#search-btn").on("click", function() {
+      var searchedCharacter = $("#character-search").val().trim();
+
+      searchedCharacter = searchedCharacter.replace(/\s+/g, "").toLowerCase();
+
+      $.get("/api/" + searchedCharacter, function(data) {
+        console.log(data);
+        if (data) {
+          
+          $('#output').html(`<div class="well">
+              <h2 id="name">${data.name}</h2>
+              <div id="stats">
+                <h3><strong>Role:</strong> <span id="role">${data.role}</span></h3>
+                <h3><strong>Age:</strong> <span id="age">${data.age}</span></h3>
+                <h3><strong>Force Points:</strong> <span id="force-points">${data.forcePoints}</span></h3>
+              </div>
+            </div>`)
+        }
+        else {
+
+
+
+
+          $("#output").html(`<h2>The force is not strong with this one. Your character was not found.</h2>`);
+          // $("#stats").hide();
+        }
+      });
+    });
+
+
+
+    $("#show-all").on("click", function() {
+      // var searchedCharacter = "Obi Wan Kenobi";
+
+      // searchedCharacter = searchedCharacter.replace(/\s+/g, "").toLowerCase();
+
+      $('#default').hide();
+
+      $.get("/api/", function(data) {
+        console.log(data);
+        if (data) {
+          // $("#stats").show();
+          // $("#name").text(data.name);
+          // $("#role").text(data.role);
+          // $("#age").text(data.age);
+          // $("#force-points").text(data.forcePoints);
+        
+          for( var i = 0; i < data.length; i++ ){
+
+            console.log(data[i]);
+            $('#output').append(`<div class="well">
+              <h2 id="name">${data[i].name}</h2>
+              <div id="stats">
+                <h3><strong>Role:</strong> <span id="role">${data[i].role}</span></h3>
+                <h3><strong>Age:</strong> <span id="age">${data[i].age}</span></h3>
+                <h3><strong>Force Points:</strong> <span id="force-points">${data[i].forcePoints}</span></h3>
+              </div>
+            </div>`)
+
+          }
+
+        }
+        else {
+          $("#name").text("ERROR");
+          $("#stats").hide();
+        }
+      });
+    });
+
+
+
+  </script>
+</body>
+</html>
